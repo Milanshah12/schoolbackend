@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('receipt_payment_headings', function(Blueprint $table){
             $table->id();
             $table->string('uuid');
