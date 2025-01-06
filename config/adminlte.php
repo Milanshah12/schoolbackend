@@ -348,6 +348,21 @@ return [
 
 
         ],
+        [
+            'text' => 'Receipts',
+            'url' => '/receipts',
+            'icon' => 'far fa-fw fa-file',
+
+
+        ],
+
+        [
+            'text' => 'Payments',
+            'url' => '/payments',
+            'icon' => 'far fa-fw fa-file',
+
+
+        ],
         ['header' => 'account_settings'],
         [
             'text' => 'profile',

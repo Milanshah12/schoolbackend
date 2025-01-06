@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\paymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\servicesController;
 use App\Http\Controllers\studentController;
@@ -36,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/roles',RoleController::class);
     Route::resource('/services',servicesController::class);
     Route::resource('/students',studentController::class);
+    Route::resource('/receipts',ReceiptController::class);
+    Route::resource('/payments',paymentController::class);
 
 });
 
