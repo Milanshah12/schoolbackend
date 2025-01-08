@@ -39,7 +39,7 @@
 
                     <div class="mb-3">
                         <label for="phone_2" class="form-label">Phone 2</label>
-                        <input type="text" name="phone2" id="phone2" class="form-control" value="{{ old('phone2') }}">
+                        <input type="text" name="phone_2" id="phone2" class="form-control" value="{{ old('phone2') }}">
                         @error('phone2')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
@@ -90,9 +90,9 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="services" class="form-label">Services</label>
-                <select class="form-select" name="service[]" multiple aria-label="Select services">
-                    <option disabled>Select service(s)</option>
+                <label for="services" class="form-label ">Services</label>
+                <select class="form-select select2" name="service[]" multiple aria-label="Select services">
+                    <option value="">--Select service--</option>
                     @foreach ($services as $service)
                         <option value="{{ $service->id }}">{{ $service->name }}</option>
                     @endforeach
@@ -110,4 +110,13 @@
             </div>
         </form>
     </div>
+    <script>
+        $(document).ready(function () {
+            // Initialize Select2
+            $('.select2').select2();
+
+            // Initialize DataTables
+            $('#exampleTable').DataTable();
+        });
+    </script>
 @endsection

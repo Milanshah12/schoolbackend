@@ -6,7 +6,10 @@
                 <h3>User List</h3>
             </div>
             <div class="col text-end">
+                @can('add_staff')
+
                 <a href="{{ url('users/create') }}" class="btn btn-primary">Create User</a>
+                @endcan
             </div>
         </div>
         @if (session('message'))
@@ -69,12 +72,20 @@
                         searchable: false,
                         render: function(data, type, row){
                             return `
+                            @can('edit_staff')
+
                             <a href="{{ url('users/${data}/edit') }}" class="btn btn-sm btn-warning me-2">Edit</a>
+                            @endcan
+
+                           @can('delete_staff')
+
                             <form action="{{ url('users/${data}') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this role?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                             </form>
+
+                           @endcan
                         `;
                         }
                     }

@@ -6,7 +6,10 @@
                 <h3>Role List</h3>
             </div>
             <div class="col text-end">
-                <a href="{{ url('roles/create') }}" class="btn btn-primary">Create Role</a>
+          @can('add_role')
+  <a href="{{ url('roles/create') }}" class="btn btn-primary">Create Role</a>
+
+  @endcan
             </div>
         </div>
         @if (session('message'))
@@ -48,12 +51,22 @@
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                            <a href="{{ url('roles/${data}/edit') }}" class="btn btn-sm btn-warning me-2">Edit</a>
+                        @can('add_edit_permission_to_role')
+                        <a href="{{ url('roles/${data}/give-permission') }}" class="btn btn-sm btn-warning me-2">Edit/Add role permission</a>
+                        @endcan
+
+                        @can('edit_role')
+                            <a href="{{ url('roles/${data}/edit') }}" class="btn btn-sm btn-success me-2">Edit</a>
+                             @endcan
+
+                             @can('delete_role')
                             <form action="{{ url('roles/${data}') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this role?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                             </form>
+
+                             @endcan
                         `;
                         }
                     }

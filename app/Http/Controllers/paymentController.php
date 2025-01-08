@@ -12,26 +12,44 @@ use Yajra\DataTables\Facades\DataTables;
 
 class paymentController extends Controller
 {
+
+
+    public function __construct(){
+        $this->middleware('permission:view_payment',['only'=>['index']]);
+        $this->middleware('permission:add_payment',['only'=>['create','store']]);
+
+        // $this->middleware('permission:edit_student',['only'=>['update','edit']]);
+
+        // $this->middleware('permission:delete_student',['only'=>['destroy']]);
+
+
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        if (request()->ajax()) {
 
-        if(request()->ajax()){
-            $payments=Payment::join('banks', 'payments.bank_id','=','banks.id')
-             ->join('receipt_payment_headings', 'payments.receipt_payment_heading_id', '=', 'receipt_payment_headings.id')
-            ->select(
-                'payments.*',
-                'banks.name as bank_name',
-                 'receipt_payment_headings.heading as heading'
-            )->get();
+            $payments = Payment::with(['bank', 'heading'])->get();
 
-            return DataTables::of($payments)->make(true);
+            $paymentsData = $payments->map(function ($payment) {
+                return [
+                    'id' => $payment->id,
+                    'date' => $payment->date,
+                    'bank_name' => $payment->bank ? $payment->bank->name : null,
+                    'amount' => $payment->amount,
+                    'heading' => $payment->heading ? $payment->heading->heading : null,
 
+                ];
+            });
+
+            return DataTables::of($paymentsData)->make(true);
         }
-            return view('payments.index');
+
+        return view('payments.index');
     }
+
 
     /**
      * Show the form for creating a new resource.

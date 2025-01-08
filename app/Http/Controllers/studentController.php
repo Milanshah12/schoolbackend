@@ -11,18 +11,55 @@ use Yajra\DataTables\Facades\DataTables;
 
 class studentController extends Controller
 {
+
+    public function __construct(){
+        $this->middleware('permission:view_student',['only'=>['index']]);
+        $this->middleware('permission:add_student',['only'=>['create','store']]);
+
+        $this->middleware('permission:edit_student',['only'=>['update','edit']]);
+
+        $this->middleware('permission:delete_student',['only'=>['destroy']]);
+        $this->middleware('permission:add_service_to_student',['only'=>['insertservice','addservice']]);
+
+
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+   public function index()
+{
+    if (request()->ajax()) {
 
-        if(request()->ajax()){
-            $student=student::query();
-            return DataTables::of($student)->make(true);
-        }
-        return view('students.index');
+        $students = Student::with('services')->get();
+
+
+        $studentsData = $students->map(function ($student) {
+
+            $services = $student->services->pluck('name')->join(', ');
+
+            // Return the transformed data
+            return [
+                'id' => $student->id,
+                'name' => $student->name,
+                'phone' => $student->phone,
+                'email' => $student->email,
+                'phone_2' => $student->phone_2,
+                'emergency_contact' => $student->emergency_contact,
+                'emergency_contact_2' => $student->emergency_contact_2,
+                'enroll_date' => $student->enroll_date,
+                'balance' => $student->balance,
+                'status' => $student->status,
+                'services' => $services,  // Add the comma-separated services
+            ];
+        });
+
+        // Return the transformed data to DataTables
+        return DataTables::of($studentsData)->make(true);
     }
+
+    return view('students.index');
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -30,7 +67,7 @@ class studentController extends Controller
     public function create()
 
     {
-        $services=services::all();
+        $services=services::where('status','active')->get();
         return view('students.create',compact('services'));
     }
 
@@ -94,8 +131,10 @@ class studentController extends Controller
     public function edit(string $id)
     {
 
+
         $student=student::findOrFail($id);
-        return view('students.edit',compact('student'));
+        $student_service=$student->services();
+        return view('students.edit',compact('student','student_service'));
     }
 
     /**
@@ -130,4 +169,48 @@ class studentController extends Controller
         $students->delete();
         return redirect()->back()->with('message', 'student deleted successfully!');
     }
+
+    public function addservice(string $id){
+
+        $services=services::all();
+
+        return view('students.addservice',compact('id','services'));
+
+    }
+
+    public function insertservice(Request $request, string $id ){
+
+
+        $validatedData = $request->validate([
+
+            'service' => 'required|array',
+            'service.*' => 'exists:services,id',
+        ]);
+
+        $student_id=$id;
+
+        $new_amount=services::where('id',$request->service)->sum('price');
+        $student=student::findOrFail($id);
+        $student_balance=$student->balance;
+
+
+        $total_balance=$new_amount + $student_balance;
+
+        $student->update([
+            'balance'=>$total_balance,
+        ]);
+        foreach($request->service as $serviceId){
+            DB::table('service_render_history')->insert([
+                'student_id'=>$student_id,
+                'service_id'=>$serviceId,
+                'amount'=>services::find($serviceId)->price,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+        return redirect()->route('students.index')->with('message', 'Service added successfully!');
+
+    }
+
+
 }

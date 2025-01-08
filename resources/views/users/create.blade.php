@@ -36,8 +36,8 @@
                     <div class="mb-3">
                         <label for="userRole" class="form-label">Role</label>
 
-                    <select class="form-select" name="role" aria-label="Default select example">
-                        <option selected>select role</option>
+                        <select class="form-control select2" name="role">
+                        <option value="">select role</option>
                         @foreach ($roles as $role)
                         <option value="{{ $role->name }}">{{ $role->name }}</option>
 
@@ -70,5 +70,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // Initialize Select2
+        $('.select2').select2();
+
+        // Initialize DataTables
+        $('#exampleTable').DataTable();
+    });
+</script>
 
 @endsection

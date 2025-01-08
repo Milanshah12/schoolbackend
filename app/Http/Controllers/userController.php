@@ -14,6 +14,17 @@ use Yajra\DataTables\Facades\DataTables;
 
 class userController extends Controller
 {
+
+    public function __construct(){
+        $this->middleware('permission:view_staff',['only'=>['index']]);
+        $this->middleware('permission:add_staff',['only'=>['create','store']]);
+
+        $this->middleware('permission:edit_staff',['only'=>['update','edit']]);
+
+        $this->middleware('permission:delete_staff',['only'=>['destroy']]);
+
+
+    }
     /**
      * Display a listing of the resource.
      */

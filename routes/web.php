@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\headingController;
 use App\Http\Controllers\paymentController;
+use App\Http\Controllers\permissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RoleController;
@@ -29,17 +31,29 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth',)->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('/users',userController::class);
     Route::resource('/roles',RoleController::class);
+    Route::get('roles/{roleId}/give-permission',[RoleController::class,'addPermissionToRole']);
+    Route::PUT('roles/{roleId}/give-permission',[RoleController::class,'givePermissionToRole']);
+
+
+
+
     Route::resource('/services',servicesController::class);
     Route::resource('/students',studentController::class);
+    Route::get('/students/{id}/add',[studentController::class,'addservice']);
+    Route::post('/students/{id}/add',[studentController::class,'insertservice']);
+
+
     Route::resource('/receipts',ReceiptController::class);
     Route::resource('/payments',paymentController::class);
+    Route::resource('/headings',headingController::class);
+    Route::resource('/permissions',permissionController::class);
 
 });
 

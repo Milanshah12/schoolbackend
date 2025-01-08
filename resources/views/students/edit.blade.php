@@ -40,7 +40,7 @@
 
                     <div class="mb-3">
                         <label for="phone_2" class="form-label">Phone 2</label>
-                        <input type="text" name="phone2" id="phone2" class="form-control" value="{{ old('phone2',$student->phone_2) }}">
+                        <input type="text" name="phone_2" id="phone2" class="form-control" value="{{ old('phone2',$student->phone_2) }}">
                         @error('phone2')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
@@ -66,6 +66,10 @@
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
+
+
+
+
 
                     <div class="mb-3">
                         <label for="enrolldate" class="form-label">Enroll Date</label>

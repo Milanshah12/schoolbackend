@@ -13,6 +13,18 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ReceiptController extends Controller
 {
+
+
+    public function __construct(){
+        $this->middleware('permission:view_receipt',['only'=>['index']]);
+        $this->middleware('permission:add_receipt',['only'=>['create','store']]);
+
+        // $this->middleware('permission:edit_student',['only'=>['update','edit']]);
+
+        // $this->middleware('permission:delete_student',['only'=>['destroy']]);
+
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -20,17 +32,32 @@ class ReceiptController extends Controller
     {
 
         if(request()->ajax()){
-            $receipts = Receipt::join('students', 'receipts.student_id', '=', 'students.id')
-            ->join('banks', 'receipts.bank_id', '=', 'banks.id')
-            ->join('receipt_payment_headings', 'receipts.receipt_payment_heading_id', '=', 'receipt_payment_headings.id')
-            ->select(
-                'receipts.*',
-                'students.name as student_name',
-                'banks.name as bank_name',
-                'receipt_payment_headings.heading as heading'
-            )
-            ->get();
+        //     $receipts = Receipt::join('students', 'receipts.student_id', '=', 'students.id')
+        //     ->join('banks', 'receipts.bank_id', '=', 'banks.id')
+        //     ->join('receipt_payment_headings', 'receipts.receipt_payment_heading_id', '=', 'receipt_payment_headings.id')
+        //     ->select(
+        //         'receipts.*',
+        //         'students.name as student_name',
+        //         'banks.name as bank_name',
+        //         'receipt_payment_headings.heading as heading'
+        //     )
+        //     ->get();
 
+        // return DataTables::of($receipts)->make(true);
+
+        $receipts=Receipt::with('bank','student','heading')
+        ->get()
+        ->map(function($receipt){
+            return[
+                'id'=>$receipt->id,
+                'date'=>$receipt->date,
+                'amount'=>$receipt->amount,
+                'student_name'=>$receipt->student->name,
+                'bank_name'=>$receipt->bank->name,
+                'heading'=>$receipt->heading->heading,
+
+            ];
+        });
         return DataTables::of($receipts)->make(true);
     }
     return view('Receipts.index');

@@ -6,7 +6,9 @@
                 <h3>receipt List</h3>
             </div>
             <div class="col text-end">
-                <a href="{{ url('receipts/create') }}" class="btn btn-primary">Create Receipt</a>
+           @can('add_receipt')
+           <a href="{{ url('receipts/create') }}" class="btn btn-primary">Create Receipt</a>
+           @endcan
             </div>
         </div>
         @if (session('message'))

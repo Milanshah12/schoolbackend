@@ -10,6 +10,18 @@ use Yajra\DataTables\Facades\DataTables;
 
 class servicesController extends Controller
 {
+
+    public function __construct(){
+        $this->middleware('permission:view_services',['only'=>['index']]);
+        $this->middleware('permission:add_services',['only'=>['create','store']]);
+
+        $this->middleware('permission:edit_services',['only'=>['update','edit']]);
+
+        $this->middleware('permission:delete_services',['only'=>['destroy']]);
+
+
+    }
+
     /**
      * Display a listing of the resource.
      */

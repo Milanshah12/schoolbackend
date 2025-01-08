@@ -5,12 +5,26 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RoleRequest;
 use App\Models\RoleModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Contracts\DataTable;
 use Yajra\DataTables\Facades\DataTables;
 
 class RoleController extends Controller
 {
+
+    public function __construct(){
+        $this->middleware('permission:view_role',['only'=>['index']]);
+        $this->middleware('permission:add_role',['only'=>['create','store']]);
+        $this->middleware('permission:add_edit_permission_to_role',['only'=>['addPermissionToRole','givePermissionToRole']]);
+
+        $this->middleware('permission:edit_role',['only'=>['update','edit']]);
+
+        $this->middleware('permission:delete_role',['only'=>['destroy']]);
+
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -86,6 +100,29 @@ class RoleController extends Controller
         $roles = Role::find($id);
         $roles->delete();
         return redirect()->back()->with('message', 'Role deleted successfully!');
+    }
+
+
+    public function addPermissionToRole($roleId){
+
+        $role=Role::findOrFail($roleId);
+        $permission=Permission::get();
+        $rolePermission=DB::table('role_has_permissions')
+        ->where('role_id',$roleId)
+        ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
+        ->all();
+        $data=compact('role','permission','rolePermission');
+        return view('roles.role_permission',$data);
+    }
+
+    public function givePermissionToRole(Request $request, $roleId){
+        $request->validate([
+            'permission'=>'required'
+        ]);
+        $role=Role::findOrFail($roleId);
+        $role->syncPermissions($request->permission);
+        return redirect()->back()->with('status','permission Added to role');
+
     }
 
 }

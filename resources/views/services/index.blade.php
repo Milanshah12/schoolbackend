@@ -6,7 +6,10 @@
                 <h3>Service List</h3>
             </div>
             <div class="col text-end">
-                <a href="{{ url('services/create') }}" class="btn btn-primary">Create Service</a>
+           @can('add_services')
+
+          <a href="{{ url('services/create') }}" class="btn btn-primary">Create Service</a>
+          @endcan
             </div>
         </div>
         @if (session('message'))
@@ -21,6 +24,7 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Price</th>
+                    <th>Status</th>
                     <th>Action</th>
 
                 </tr>
@@ -44,9 +48,14 @@
                         data: 'name',
                         name: 'name'
                     },
+
                     {
                         data: 'price',
                         name: 'price'
+                    },
+                    {
+                        data:'status',
+                        name:'status'
                     },
                     {
                         data: 'id',
@@ -55,12 +64,17 @@
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                                <a href="/services/${data}/edit" class="btn btn-sm btn-warning me-2">Edit</a>
-                                <form action="/services/${data}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this service?');">
+
+                              @can('edit_services')
+
+                             <a href="/services/${data}/edit" class="btn btn-sm btn-warning me-2">Edit</a>  @endcan
+                                @can('delete_services')
+                                 <form action="/services/${data}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this service?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
+                                @endcan
                             `;
                         }
                     }

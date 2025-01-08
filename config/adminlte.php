@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\HttpKernel\Profiler\Profile;
+
 return [
 
     /*
@@ -14,7 +16,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'School',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,7 +65,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo'=>'School',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -110,7 +112,7 @@ return [
     */
 
     'preloader' => [
-        'enabled' => true,
+        'enabled' => false,
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
@@ -134,8 +136,8 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
-    'usermenu_header_class' => 'bg-primary',
+    'usermenu_header' => true,
+    'usermenu_header_class' => 'bg-secondary',
     'usermenu_image' => false,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
@@ -196,9 +198,9 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar' => 'sidebar-dark-secondary elevation-4',
     'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
+    'classes_topnav' => 'navbar-dark-secondary navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container',
 
@@ -263,7 +265,7 @@ return [
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
-    'profile_url' => false,
+    'profile_url' => 'profile',
     'disable_darkmode_routes' => false,
 
     /*
@@ -315,119 +317,76 @@ return [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
-        [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
+
         [
             'text' => 'Users',
             'url' => '/users',
-            'icon' => 'far fa-fw fa-file',
+            'icon' => 'fas fa-fw fa-user',
 
 
         ],
-        [
-            'text' => 'Roles',
-            'url' => '/roles',
-            'icon' => 'far fa-fw fa-file',
 
-
-        ],
         [
             'text' => 'Services',
             'url' => '/services',
-            'icon' => 'far fa-fw fa-file',
+            'icon' => 'fas fa-fw fa-concierge-bell',
 
 
         ],
         [
             'text' => 'Students',
             'url' => '/students',
-            'icon' => 'far fa-fw fa-file',
+            'icon' => 'fas fa-fw fa-user-graduate',
 
 
         ],
         [
-            'text' => 'Receipts',
-            'url' => '/receipts',
-            'icon' => 'far fa-fw fa-file',
+            'text' => 'Headings',
+            'url' => '/headings',
+            'icon' => 'fas fa-fw fa-heading',
 
 
         ],
 
-        [
-            'text' => 'Payments',
-            'url' => '/payments',
-            'icon' => 'far fa-fw fa-file',
 
-
-        ],
-        ['header' => 'account_settings'],
         [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
+            'text' => 'Account',
+            'url' => '#',
+           'icon' => 'fas fa-fw fa-user-cog',
             'submenu' => [
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'Receipts',
+                    'url' => '/receipts',
+                    'icon' => 'fas fa-fw fa-receipt',
+
+
                 ],
+
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'Payments',
+                    'url' => '/payments',
+                    'icon' => 'fas fa-fw fa-money-check-alt',
+
+
                 ],
             ],
         ],
-        ['header' => 'labels'],
+        ['header' => 'Role-Permission'],
         [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
+            'text' => 'Roles',
+            'url' => '/roles',
+            'icon' => 'fas fa-fw fa-users-cog',
+
+
         ],
         [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
+            'text' => 'Permissions',
+            'url' => '/permissions',
+            'icon' => 'fas fa-fw fa-lock',
+
+
         ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
+
     ],
 
     /*
@@ -565,8 +524,8 @@ return [
         ],
         'options' => [
             'loading_screen' => 1000,
-            'auto_show_new_tab' => true,
-            'use_navbar_items' => true,
+            'auto_show_new_tab' => false,
+            'use_navbar_items' => false,
         ],
     ],
 

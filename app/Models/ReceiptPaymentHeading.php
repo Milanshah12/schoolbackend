@@ -9,6 +9,10 @@ class ReceiptPaymentHeading extends Model
 {
     use HasFactory;
 
+    protected $table='receipt_payment_headings';
+
+    protected $fillable=['uuid','heading','type'];
+
     public function payments(){
         return $this->hasMany(Payment::class);
 
