@@ -6,16 +6,21 @@
                 <h3>Service List</h3>
             </div>
             <div class="col text-end">
-           @can('add_services')
-
-          <a href="{{ url('services/create') }}" class="btn btn-primary">Create Service</a>
-          @endcan
+                @can('add_services')
+                    <a href="{{ url('services/create') }}" class="btn btn-primary">Create Service</a>
+                @endcan
             </div>
         </div>
         @if (session('message'))
-            <div class="alert alert-success mt-3">
-                {{ session('message') }}
-            </div>
+            <script>
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "{{ session('message') }}",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            </script>
         @endif
 
         <table id="services-table" class="table table-bordered">
@@ -39,8 +44,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('services.index') }}",
-                columns: [
-                    {
+                columns: [{
                         data: 'id',
                         name: 'id'
                     },
@@ -49,14 +53,20 @@
                         name: 'name'
                     },
 
+
                     {
                         data: 'price',
-                        name: 'price'
+                        name: 'price', // Name should match the database column
+                        render: function(data) {
+                            return `Rs. ${data}`;
+                        }
                     },
+
                     {
-                        data:'status',
-                        name:'status'
+                        data: 'status',
+                        name: 'status'
                     },
+
                     {
                         data: 'id',
                         name: 'actions',
@@ -69,18 +79,37 @@
 
                              <a href="/services/${data}/edit" class="btn btn-sm btn-warning me-2">Edit</a>  @endcan
                                 @can('delete_services')
-                                 <form action="/services/${data}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this service?');">
+                                 <form action="/services/${data}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                                 </form>
                                 @endcan
                             `;
                         }
                     }
                 ]
+                // order: [[1, 'desc']];
             });
         });
     </script>
-
+    <script>
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
 @endsection

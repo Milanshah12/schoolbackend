@@ -28,7 +28,9 @@ class servicesController extends Controller
     public function index()
     {
         if(request()->ajax()){
-            $service=services::query();
+            $service=services::query()
+            ->orderBy('created_at', 'asc') // Replace 'column_name' with the column you want to sort by
+            ->get();;
             return DataTables::of($service)->make(true);
         }
         return view('services.index');

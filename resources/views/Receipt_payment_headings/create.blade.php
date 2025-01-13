@@ -52,7 +52,7 @@
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-success">Add Heading</button>
+                                <button type="submit" class="btn-payment btn0-success">Add Heading</button>
                             </div>
                         </form>
                     </div>
@@ -61,7 +61,25 @@
         </div>
     </div>
 
-
+    <script>
+        $(document).on('click', '.btn-receipt', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
 @endsection
 
 

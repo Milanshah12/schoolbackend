@@ -8,6 +8,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\servicesController;
 use App\Http\Controllers\studentController;
+use App\Http\Controllers\tagController;
 use App\Http\Controllers\userController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,9 @@ Route::middleware('auth',)->group(function () {
     Route::resource('/payments',paymentController::class);
     Route::resource('/headings',headingController::class);
     Route::resource('/permissions',permissionController::class);
+
+
+    Route::resource('/tags',tagController::class);
 
 });
 

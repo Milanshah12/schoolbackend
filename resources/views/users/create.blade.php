@@ -35,16 +35,14 @@
                     </div>
                     <div class="mb-3">
                         <label for="userRole" class="form-label">Role</label>
-
-                        <select class="form-control select2" name="role">
-                        <option value="">select role</option>
-                        @foreach ($roles as $role)
-                        <option value="{{ $role->name }}">{{ $role->name }}</option>
-
-                    @endforeach
-                      </select>
-
+                        <select class="form-control select2" id="userRole" name="role[]" multiple aria-label="Select roles">
+                            <option value="" disabled>--Select Role--</option>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                            @endforeach
+                        </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" name="password" id="Userpassword" class="form-control"

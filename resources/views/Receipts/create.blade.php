@@ -38,18 +38,19 @@
 
                             <div class="mb-3">
                                 <label for="bank_id" class="form-label">Bank:</label>
-                                <select name="bank_id" id="bank_id" class="form-control select2">
-                                    <option value="">-- Select Bank --</option>
+                                <select name="bank_id" id="bank_id" class="form-control select2" aria-label="Select tags">
+                                    <option value="" disabled>-- Select Bank --</option>
                                     @foreach ($banks as $bank)
-                                        <option value="{{ $bank->id }}">{{ $bank->name }}</option>
+                                        <option value="{{ $bank->id }}">{{ucfirst($bank->name) }}</option>
                                     @endforeach
                                 </select>
                             </div>
 
+
                             <div class="mb-3">
                                 <label for="student_id" class="form-label">Student:</label>
                                 <select name="student_id" id="student_id" class="form-control select2">
-                                    <option value="">-- Select Student --</option>
+                                    <option value="" disabled>-- Select Student --</option>
                                     @foreach ($students as $student)
                                         <option value="{{ $student->id }}">{{ $student->name }}</option>
                                     @endforeach
@@ -59,7 +60,7 @@
                             <div class="mb-3">
                                 <label for="receipt_payment_heading_id" class="form-label">Heading:</label>
                                 <select name="receipt_payment_heading_id" id="receipt_payment_heading_id" class="form-control select2">
-                                    <option value="">-- Select Heading --</option>
+                                    <option value="" disabled>-- Select Heading --</option>
                                     @foreach ($headings as $heading)
                                         <option value="{{ $heading->id }}">{{ $heading->heading }}</option>
                                     @endforeach
@@ -72,7 +73,7 @@
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-success">Add Receipt</button>
+                                <button type="submit" class="btn-receipt btn-success">Add Receipt</button>
                             </div>
                         </form>
                     </div>
@@ -90,6 +91,26 @@
             $('#exampleTable').DataTable();
         });
     </script>
+
+<script>
+    $(document).on('click', '.btn-receipt', function(e) {
+        e.preventDefault();
+        const form = $(this).closest('form');
+        Swal.fire({
+            title: "Are you sure you want to add this payment?",
+            text: "You won't be able to return this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+</script>
 @endsection
 
 

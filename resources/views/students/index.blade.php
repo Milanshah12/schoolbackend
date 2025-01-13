@@ -14,10 +14,16 @@
     </div>
 
     @if (session('message'))
-        <div class="alert alert-success mt-3">
-            {{ session('message') }}
-        </div>
-    @endif
+    <script>
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "{{ session('message') }}",
+            showConfirmButton: false,
+            timer: 1500
+        });
+    </script>
+@endif
 
     <!-- Add responsive container -->
     <div class="table-responsive">
@@ -35,6 +41,7 @@
                     <th>Balance</th>
                     <th>Status</th>
                     <th>Services</th>
+                    <th>Tags</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -61,6 +68,7 @@
         { data: 'balance', name: 'balance' },
         { data: 'status', name: 'status' },
         { data: 'services', name: 'services' },
+        { data: 'tags', name: 'tags'},
         {
             data: 'id',
             name: 'action',
@@ -77,10 +85,10 @@
                     <a href="{{ url('students/${data}/edit') }}" class="btn btn-sm btn-warning me-2">Edit</a>
                 @endcan
                 @can('delete_student')
-                    <form action="{{ url('students/${data}') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this student?');">
+                    <form action="{{ url('students/${data}') }}" method="POST" class="d-inline" >
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                     </form>
                 @endcan
                 `;
@@ -90,6 +98,25 @@
     responsive: true // Enable responsive mode for DataTables
 });
 
+        });
+    </script>
+     <script>
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     </script>
 @endsection

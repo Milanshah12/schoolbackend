@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\services;
 use App\Models\student;
+use App\Models\tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Contracts\DataTable;
@@ -29,13 +30,16 @@ class studentController extends Controller
    public function index()
 {
     if (request()->ajax()) {
+        $students = Student::with(['services', 'tags'])
+        ->orderBy('created_at', 'desc') // Replace 'column_name' with the column you want to sort by
+        ->get();
 
-        $students = Student::with('services')->get();
 
 
         $studentsData = $students->map(function ($student) {
 
             $services = $student->services->pluck('name')->join(', ');
+            $tags=$student->tags->pluck('name')->join(', ');
 
             // Return the transformed data
             return [
@@ -50,6 +54,7 @@ class studentController extends Controller
                 'balance' => $student->balance,
                 'status' => $student->status,
                 'services' => $services,  // Add the comma-separated services
+                'tags'=>$tags
             ];
         });
 
@@ -67,8 +72,9 @@ class studentController extends Controller
     public function create()
 
     {
+        $tags=tag::get();
         $services=services::where('status','active')->get();
-        return view('students.create',compact('services'));
+        return view('students.create',compact('services','tags'));
     }
 
     /**
@@ -87,6 +93,8 @@ class studentController extends Controller
             'status' => 'required|in:active,inactive',
             'service' => 'required|array',
             'service.*' => 'exists:services,id',
+            'tags'=>'required|array',
+            'tags.*' => 'exists:tags,id',
         ]);
 
             $total_amount=services::whereIn('id',$request->service)->sum('price');
@@ -111,6 +119,13 @@ class studentController extends Controller
                 'updated_at' => now(),
             ]);
         }
+        foreach ($request->tags as $tagId) {
+            $tag = Tag::find($tagId);
+            if ($tag) {
+                $tag->student()->attach($student->id);
+            }
+        }
+
 
 
         return redirect()->back()->with('message', 'Student added successfully.');
@@ -130,12 +145,12 @@ class studentController extends Controller
      */
     public function edit(string $id)
     {
-
-
-        $student=student::findOrFail($id);
-        $student_service=$student->services();
-        return view('students.edit',compact('student','student_service'));
+        $student = Student::with(['services', 'tags'])->findOrFail($id); // Eager load services and tags
+        $tags = Tag::all(); // Fetch all tags
+        $data = compact('student', 'tags'); // Pass student and tags to the view
+        return view('students.edit', $data);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -151,11 +166,16 @@ class studentController extends Controller
             'emergency_contact_2' => 'nullable|string|max:15',
             'enroll_date' => 'required|date',
             'status' => 'required|in:active,inactive',
+            'tags' => 'required|array',
+            'tags.*' => 'exists:tags,id',
 
         ]);
 
         $student=student::findOrFail($id);
         $student->update($validatedData);
+
+        $student->tags()->sync($request->tags);
+
         return redirect()->route('students.index')->with('message', 'Students info updated successfully!');
 
     }

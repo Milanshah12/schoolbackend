@@ -44,6 +44,21 @@
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <div class="mb-3">
+                        <label for="tags" class="form-label">Tag</label>
+                        <select class="form-control select2" name="tags[]" multiple aria-label="Select tags" style="color: black;">
+                            <option value="" disabled>--Select Tag--</option>
+                            @foreach ($tags as $tag)
+                                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                            @endforeach
+                        </select>
+
+                        @error('tags')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                 </div>
 
                 <!-- Right Column -->
@@ -85,23 +100,28 @@
                             </label>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label for="services" class="form-label">Services</label>
+                        <select class="form-control select2" name="service[]" multiple aria-label="Select services">
+                            <option value="" disabled>--Select service--</option>
+                            @foreach ($services as $service)
+                                <option value="{{ $service->id }}">{{ ucfirst($service->name) }}</option>
+                            @endforeach
+                        </select>
+
+                        @error('service')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
 
                 </div>
             </div>
-            <div class="mb-3">
-                <label for="services" class="form-label ">Services</label>
-                <select class="form-select select2" name="service[]" multiple aria-label="Select services">
-                    <option value="">--Select service--</option>
-                    @foreach ($services as $service)
-                        <option value="{{ $service->id }}">{{ $service->name }}</option>
-                    @endforeach
-                </select>
 
-                @error('service')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
-                @enderror
-            </div>
+
+
+
+
 
 
 

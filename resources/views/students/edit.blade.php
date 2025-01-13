@@ -90,7 +90,24 @@
                             </label>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label for="tags" class="form-label ">Tag</label>
+                        <select class="form-control select2" name="tags[]" multiple aria-label="Select tags">
+                            <option value="" disabled>--Select Tag--</option>
+                            @foreach ($tags as $tag)
+                            <option value="{{ $tag->id }}"
+                                {{ $student->tags->contains($tag->id) ? 'selected' : '' }}>
+                                {{ $tag->name }}
+                            </option>
+                            @endforeach
 
+
+                        </select>
+
+                        @error('service')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
                 </div>
             </div>
@@ -102,4 +119,13 @@
             </div>
         </form>
     </div>
+    <script>
+        $(document).ready(function () {
+            // Initialize Select2
+            $('.select2').select2();
+
+            // Initialize DataTables
+            $('#exampleTable').DataTable();
+        });
+    </script>
 @endsection

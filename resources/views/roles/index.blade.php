@@ -13,10 +13,16 @@
             </div>
         </div>
         @if (session('message'))
-            <div class="alert alert-success mt-3">
-                {{ session('message') }}
-            </div>
-        @endif
+        <script>
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "{{ session('message') }}",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        </script>
+    @endif
 
         <table id="roles-table" class="table table-bordered">
             <thead>
@@ -60,10 +66,10 @@
                              @endcan
 
                              @can('delete_role')
-                            <form action="{{ url('roles/${data}') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this role?');">
+                            <form action="{{ url('roles/${data}') }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                             </form>
 
                              @endcan
@@ -71,6 +77,25 @@
                         }
                     }
                 ]
+            });
+        });
+    </script>
+     <script>
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
         });
     </script>

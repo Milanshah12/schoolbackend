@@ -24,4 +24,13 @@ class student extends Model
         return $this->belongsToMany(services::class, 'service_render_history', 'student_id', 'service_id');
 
     }
+    public function tags()
+{
+    return $this->belongsToMany(tag::class);
+}
+
+public function receipt(){
+    return $this->hasMany(receipt::class);
+}
+
 }

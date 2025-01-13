@@ -387,6 +387,14 @@ return [
 
         ],
 
+        [
+            'text' => 'Tag',
+            'url' => '/tags',
+            'icon' => 'fas fa-fw fa-heading',
+
+
+        ],
+
     ],
 
     /*
@@ -523,7 +531,7 @@ return [
             'fullscreen' => true,
         ],
         'options' => [
-            'loading_screen' => 1000,
+            'loading_screen' => 10,
             'auto_show_new_tab' => false,
             'use_navbar_items' => false,
         ],

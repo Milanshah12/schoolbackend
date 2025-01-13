@@ -61,7 +61,7 @@
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-success">Add Receipt</button>
+                                <button type="submit" class="btn-payment btn-success">Add Receipt</button>
                             </div>
                         </form>
                     </div>
@@ -77,6 +77,25 @@
 
             // Initialize DataTables
             $('#exampleTable').DataTable();
+        });
+    </script>
+    <script>
+        $(document).on('click', '.btn-payment', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            Swal.fire({
+                title: "Are you sure you want to add this payment?",
+                text: "You won't be able to return this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     </script>
 @endsection

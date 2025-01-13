@@ -1,0 +1,7 @@
+.select2-container--default .select2-selection--multiple .select2-selection__choice{
+    color: black;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+color: black;
+line-height: 28px;
+}

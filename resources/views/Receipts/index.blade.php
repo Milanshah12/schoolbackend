@@ -6,15 +6,21 @@
                 <h3>receipt List</h3>
             </div>
             <div class="col text-end">
-           @can('add_receipt')
-           <a href="{{ url('receipts/create') }}" class="btn btn-primary">Create Receipt</a>
-           @endcan
+                @can('add_receipt')
+                    <a href="{{ url('receipts/create') }}" class="btn btn-primary">Create Receipt</a>
+                @endcan
             </div>
         </div>
         @if (session('message'))
-            <div class="alert alert-success mt-3">
-                {{ session('message') }}
-            </div>
+            <script>
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "{{ session('message') }}",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            </script>
         @endif
         <table id="receipts-table" class="table table-bordered">
             <thead>
@@ -47,7 +53,7 @@
                     },
                     {
                         data: 'student_name',
-                        name:'student_name'
+                        name: 'student_name'
                     },
                     {
                         data: 'bank_name',
@@ -58,8 +64,11 @@
                         name: 'heading'
                     },
                     {
-                        data:'amount',
-                        name: 'amount'
+                        data: 'amount',
+                        name: 'amount',
+                        render: function(data) {
+                            return `Rs. ${data}`;
+                        }
                     }
 
                 ]

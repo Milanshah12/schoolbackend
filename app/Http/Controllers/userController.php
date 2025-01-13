@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
+use App\Models\RoleModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,16 +29,27 @@ class userController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
 {
     if (request()->ajax()) {
-        $users = User::where('id', '!=', Auth::id())
+
+        if($request->type==='soft_deleted'){
+            $users=User::onlyTrashed()->with('roles')->get()
+            ->map(function ($user) {
+                $user->role = $user->roles->pluck('name')->join(', '); // Add the role attribute
+                return $user;
+            });
+        }else{
+            $users = User::where('id', '!=', Auth::id())
             ->with('roles')
             ->get()
             ->map(function ($user) {
                 $user->role = $user->roles->pluck('name')->join(', '); // Add the role attribute
                 return $user;
             });
+        }
+
+
 
         return DataTables::of($users)->make(true);
     }
@@ -45,6 +57,18 @@ class userController extends Controller
     return view('users.index');
 }
 
+
+// if (request()->ajax()) {
+//     $users = User::where('id', '!=', Auth::id())
+//         ->with('roles')
+//         ->get()
+//         ->map(function ($user) {
+//             $user->role = $user->roles->pluck('name')->join(', '); // Add the role attribute
+//             return $user;
+//         });
+
+//     return DataTables::of($users)->make(true);
+// }
     /**
      * Show the form for creating a new resource.
      */
@@ -60,25 +84,28 @@ class userController extends Controller
      */
     public function store(UserRequest $request)
     {
-        $user=User::create([
-            'name'=>$request->name,
-            'email'=>$request->email,
-            'password'=>Hash::make($request->password),
+        // Create the user
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
-        $roles=Role::where('name',$request->role)->first();
+        // Fetch role IDs based on role names provided in the request
+        $roleIds = RoleModel::whereIn('name', $request->role)->pluck('id')->toArray();
 
-        if($roles){
+        // Attach roles to the user via the pivot table
+        foreach ($roleIds as $roleId) {
             DB::table('model_has_roles')->insert([
-                'role_id' => $roles->id,
                 'model_id' => $user->id,
-                'model_type' => User::class,
+                'role_id' => $roleId,
+                'model_type' => 'App\Models\User',
             ]);
         }
 
         return redirect()->route('users.index')->with('message', 'User created successfully!');
-
     }
+
 
     /**
      * Display the specified resource.
@@ -108,7 +135,8 @@ class userController extends Controller
         'name' => 'required|string|max:255',
         'password' => 'nullable|string|min:6|max:255',
         'confirm_password' => 'same:password',
-        'role' => 'required|exists:roles,name',
+        'role' => 'required|array|',
+
     ]);
 
     // Update user details
@@ -117,19 +145,17 @@ class userController extends Controller
         'password' => $request->password ? Hash::make($request->password) : $user->password,
     ]);
 
-    // Fetch the role
-    $role = Role::where('name', $request->role)->first();
 
-    if ($role) {
-        DB::table('model_has_roles')->updateOrInsert(
-            [
-                'model_id' => $user->id,
-                'model_type' => User::class, // Ensure the model type is set
-            ],
-            [
-                'role_id' => $role->id,
-            ]
-        );
+    $role = RoleModel::whereIn('name', $request->role)->pluck('id')->toArray();
+
+    // Fetch the role
+
+    foreach ($role as $roleId) {
+        DB::table('model_has_roles')->updateOrInsert([
+            'model_id' => $user->id,
+            'role_id' => $roleId,
+            'model_type' => 'App\Models\User',
+        ]);
     }
 
     // Redirect with a success message
